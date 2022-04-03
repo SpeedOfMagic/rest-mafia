@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+message DummyMessage {
+  optional string error = 1;
+}
+
+message NameMessage {
+  string name = 1;
+}
+
+message GameStartedMessage {
+  repeated string list = 1;
+  fixed32 role = 2;
+}
+
+enum CommandType {
+  FINISH = 0;
+  MURDER = 1;
+  EXECUTE = 2;
+  INVESTIGATE = 3;
+  PUBLISH = 4;
+}
+
+message CommandMessage {
+  CommandType type = 1;
+  string name = 2;
+  optional string suspect = 3;
+}
+
+enum InfoType {
+  END = 0;
+  START = 1;
+  PLAYER_FINISH = 2;
+  PHASE_FINISH = 3;
+  INVESTIGATE_RESULT = 4;
+  PUBLISH_RESULT = 5;
+  EXECUTE_VOTE = 6;
+  EXECUTED = 7;
+  MURDER_VOTE = 8;
+  MURDERED = 9;
+}
+
+message InfoMessage {
+  InfoType type = 1;
+  optional string name = 2;
+  optional fixed32 role = 3;
+  optional string candidate = 4;
+  optional bool winner = 5;
+}
+
+service Mafia {
+  rpc start_game(NameMessage) returns (GameStartedMessage) {}
+
+  rpc submit_day_command(CommandMessage) returns (DummyMessage) {}
+  rpc listen_day(NameMessage) returns (stream InfoMessage) {}
+
+  rpc submit_night_command(CommandMessage) returns (DummyMessage) {}
+  rpc listen_night(NameMessage) returns (stream InfoMessage) {}
+}

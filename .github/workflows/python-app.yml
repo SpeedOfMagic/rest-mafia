@@ -1,0 +1,33 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Check python application
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        pip install pytest pycodestyle
+        sudo apt-get install -y protobuf-compiler
+        pip install grpcio grpcio-tools
+    - name: Generate python files by using grpc_tools.protoc
+      run: python -m grpc_tools.protoc -I=proto --python_out=. --grpc_python_out=proto proto/mafia_service.proto
+    - name: Check code style
+      run: pycodestyle ./mafia ./voice_chat --max-line-length=120
+    - name: Test with pytest
+      run: pytest ./mafia/tests.py ./voice_chat/tests.py
