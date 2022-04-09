@@ -3,3 +3,4 @@ keyboard
 grpcio
 grpcio-tools
 flask
+PyJWT

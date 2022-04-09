@@ -7,7 +7,7 @@
 <body class="container-fluid" style="display: flex; min-height: 100vh; flex-direction: column;">
     <header>
         <div><a href="/" style="color: black; text-decoration: none">
-            <p style="float: left;"><img src="/ico.png" width="70"/></p>
+            <p style="float: left;"><img src="/ico.png" width="60"/></p>
             <h1>REST-mafia</h1>
         </a></div>
     </header>
@@ -15,8 +15,13 @@
         <div class="btn-group w-100" role="group">
           <a href="/" type="button" class="btn btn-primary">Home page</a>
           <a href="/all_profiles" type="button" class="btn btn-secondary">View all profiles</a>
-          <a href="/register" type="button" class="btn btn-warning">Register</a>
-          <a href="/authorize" type="button" class="btn btn-danger">Authorize</a>
+          {% if login %}
+              <a href="/profile/{{login}}" type="button" class="btn btn-warning">{{login}}</a>
+              <a href="/logout" type="button" class="btn btn-danger">Logout</a>
+          {% else %}
+              <a href="/register" type="button" class="btn btn-warning">Register</a>
+              <a href="/authorize" type="button" class="btn btn-danger">Authorize</a>
+          {% endif %}
         </div>
     </nav>
     <main style="flex: 1">
