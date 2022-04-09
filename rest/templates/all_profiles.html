@@ -7,7 +7,7 @@
 <body class="container-fluid">
     <header>
         <div><a href="/" style="color: black; text-decoration: none">
-            <p style="float: left;"><img src="ico.png" width="70"/></p>
+            <p style="float: left;"><img src="/ico.png" width="70"/></p>
             <h1>REST-Mafia</h1>
         </a></div>
     </header>
@@ -23,9 +23,9 @@
         <h1 class="text-center times-new-roman huge">All existing profiles</h1>
         <hr/>
         <ul class="list-group">
-            <li class="list-group-item"><a href="profile/LOL">LOL</a></li>
-            <li class="list-group-item"><a href="profile/kek">kek</a></li>
-            <li class="list-group-item"><a href="profile/Azaza">Azaza</a></li>
+            {% for login in all_profiles %}
+            <li class="list-group-item"><a href="profile/{{ login }}">{{ login }}</a></li>
+            {% endfor %}
         </ul>
     </main>
 </body>

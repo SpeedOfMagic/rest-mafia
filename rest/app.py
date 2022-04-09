@@ -1,39 +1,50 @@
-from flask import Flask, request, Markup
+import sqlite3
+
+from flask import Flask, request, render_template
+from rest.profile_dao import Profile, ProfileDao
+from hashlib import sha256
 
 
 app = Flask(__name__)
+dao = ProfileDao()
 
 
 @app.route('/')
 def index():
-    return open('templates/index.html').read()
+    return render_template('index.html')
 
 
 @app.route('/all_profiles')
 def all_profiles():
-    return open('templates/all_profiles.html').read()
+    return render_template('all_profiles.html', all_profiles=dao.get_all_logins())
 
 
 @app.route('/register', methods=['GET'])
 def register_get():
-    return open('templates/register.html').read()
+    return render_template('register.html')
 
 
 @app.route('/register', methods=['POST'])
 def register_post():
-    print('POSTED!')
-    return open('templates/registration_complete.html').read()
+    new_profile = Profile(login=request.form['login'], password=sha256(request.form['password'].encode()).hexdigest())
+    try:
+        dao.insert_profile(new_profile)
+    except sqlite3.IntegrityError:
+        return render_template('failed.html', reason='Registration failed, since such user already exists'), 400
+    return render_template('registration_complete.html')
 
 
 @app.route('/authorize')
 def authorize():
-    return open('templates/authorize.html').read()
+    return render_template('authorize.html')
 
 
 @app.route('/profile/<string:login>')
 def profile(login):
-    print(login)
-    return open('templates/profile.html').read()
+    cur_profile = dao.lookup_profile(login)
+    if cur_profile is None:
+        return render_template('fail.html', reason='No such profile exists')
+    return render_template('profile.html', **vars(cur_profile))
 
 
 @app.route('/ico.png')

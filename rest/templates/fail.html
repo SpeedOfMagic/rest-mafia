@@ -7,27 +7,21 @@
 <body class="container-fluid">
     <header>
         <div><a href="/" style="color: black; text-decoration: none">
-            <p style="float: left;"><img src="/ico.png" width="70"/></p>
+            <p style="float: left;"><img src="ico.png" width="70"/></p>
             <h1>REST-Mafia</h1>
         </a></div>
     </header>
     <nav>
         <div class="btn-group w-100" role="group" aria-label="Basic example">
-          <a href="" type="button" class="btn btn-primary">Home page</a>
+          <a href="/" type="button" class="btn btn-primary">Home page</a>
           <a href="all_profiles" type="button" class="btn btn-secondary">View all profiles</a>
           <a href="register" type="button" class="btn btn-warning">Register</a>
           <a href="authorize" type="button" class="btn btn-danger">Authorize</a>
         </div>
     </nav>
     <main>
-        <h1 class="text-center times-new-roman huge">Authorize</h1>
+        <h1 class="text-center times-new-roman huge">{{ reason }}</h1>
         <hr/>
-        <h5>Please enter your login and password:</h5>
-        <form method="post">
-            <input type="text" class="form-control" placeholder="Login"/>
-            <input type="password" class="form-control" placeholder="Password"/>
-            <input type="submit" class="form-control">
-        </form>
     </main>
 </body>
 </html>
