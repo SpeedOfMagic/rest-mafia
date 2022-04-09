@@ -30,4 +30,4 @@ jobs:
     - name: Check code style
       run: pycodestyle ./mafia ./voice_chat --max-line-length=120
     - name: Test with pytest
-      run: pytest ./mafia/tests.py ./voice_chat/tests.py
+      run: pytest ./mafia/tests.py ./voice_chat/tests.py ./rest/tests.py
