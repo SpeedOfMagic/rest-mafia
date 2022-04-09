@@ -17,24 +17,24 @@ def get_hash(password):
     return sha256(password.encode()).hexdigest()
 
 
-def render_page(page, **context):
-    template = open('templates/base.html').read().replace('{main}', open(f'templates/{page}').read())
-    context['authorized_login'] = get_login_if_authorized()
-    return render_template_string(template, **context)
-
-
 def get_login_if_authorized():
     if 'jwt' in request.cookies:
         jwt_token = request.cookies['jwt']
         try:
             login_pass = jwt.decode(jwt_token, secret, algorithms=["HS256"])
-        except jwt.DecodeError as e:
+        except jwt.DecodeError:
             return None
         if 'login' in login_pass and 'password' in login_pass:
             login_profile = dao.lookup_profile(login_pass['login'])
             if login_profile is not None and login_profile.password == get_hash(login_pass['password']):
                 return login_profile.login
     return None
+
+
+def render_page(page, authorized_login=None, use_param=False, **context):
+    template = open('templates/base.html').read().replace('{main}', open(f'templates/{page}').read())
+    context['authorized_login'] = authorized_login if use_param else get_login_if_authorized()
+    return render_template_string(template, **context)
 
 
 @app.route('/')
@@ -85,9 +85,9 @@ def authorize_post():
         return render_page('response.html', reason='No such profile exists'), 400
     if cur_profile.password != password:
         return render_page('response.html', reason='Password is incorrect'), 400
-    resp = make_response(render_page('response.html', reason='Authorization successful!'))
 
     jwt_token = jwt.encode({'login': login, 'password': request.form['password']}, secret, algorithm="HS256")
+    resp = make_response(render_page('response.html', login, True, reason='Authorization successful!'))
     resp.set_cookie('jwt', jwt_token)
     return resp
 
@@ -108,8 +108,12 @@ def profile(login):
 
 
 @app.route('/logout')
-def logout():  # Logout
-    pass
+def logout():
+    if get_login_if_authorized() is None:
+        return render_page('response.html', reason='You are already logged out')
+    resp = make_response(render_page('response.html', None, True, reason='You have successfully logged out'))
+    resp.set_cookie('jwt', '')
+    return resp
 
 
 @app.route('/ico.png')
