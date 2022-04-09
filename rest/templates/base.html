@@ -15,8 +15,8 @@
         <div class="btn-group w-100" role="group">
           <a href="/" type="button" class="btn btn-primary">Home page</a>
           <a href="/all_profiles" type="button" class="btn btn-secondary">View all profiles</a>
-          {% if login %}
-              <a href="/profile/{{login}}" type="button" class="btn btn-warning">{{login}}</a>
+          {% if authorized_login %}
+              <a href="/profile/{{authorized_login}}" type="button" class="btn btn-warning">{{authorized_login}}</a>
               <a href="/logout" type="button" class="btn btn-danger">Logout</a>
           {% else %}
               <a href="/register" type="button" class="btn btn-warning">Register</a>

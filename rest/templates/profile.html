@@ -1,6 +1,6 @@
 <h1 class="text-center times-new-roman huge">{{ login }}</h1>
 <hr/>
-<img id="avatar" src="data:image/png;base64,{{ base64image }}" alt="Avatar image">
+<img id="avatar" src="data:image/png;base64,{{ base64image }}" alt="Avatar image" width="15%" height="15%">
 <div class="row w-25 gx-0">
     <ul class="list-group col">
         <li class="list-group-item list-group-item-primary flex-fill col h-25">Name</li>
@@ -21,5 +21,7 @@
         <li class="list-group-item flex-fill col h-25">{{ lose_count }}</li>
     </ul>
     <p><a href="/report-{{ login }}.pdf" type="button" class="btn btn-secondary">Generate PDF report</a></p>
-    <p><a href="/edit?login={{ login }}" type="button" class="btn btn-warning">Edit profile</a></p>
+    {% if login==authorized_login %}
+        <p><a href="/edit?login={{ login }}" type="button" class="btn btn-warning">Edit profile</a></p>
+    {% endif %}
 </div>

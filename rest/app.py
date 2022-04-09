@@ -1,3 +1,4 @@
+import base64
 import secrets
 import sqlite3
 
@@ -18,7 +19,7 @@ def get_hash(password):
 
 def render_page(page, **context):
     template = open('templates/base.html').read().replace('{main}', open(f'templates/{page}').read())
-    context['login'] = get_login_if_authorized()
+    context['authorized_login'] = get_login_if_authorized()
     return render_template_string(template, **context)
 
 
@@ -28,7 +29,6 @@ def get_login_if_authorized():
         try:
             login_pass = jwt.decode(jwt_token, secret, algorithms=["HS256"])
         except jwt.DecodeError as e:
-            print(e)
             return None
         if 'login' in login_pass and 'password' in login_pass:
             login_profile = dao.lookup_profile(login_pass['login'])
@@ -97,8 +97,8 @@ def profile(login):
     cur_profile = dao.lookup_profile(login)
     if cur_profile is None:
         return render_page('response.html', reason='No such profile exists'), 400
-    # TODO Display image
-    return render_page('profile.html', **vars(cur_profile))
+    base64image = base64.b64encode(cur_profile.image).decode()
+    return render_page('profile.html', **vars(cur_profile), base64image=base64image)
 
 
 # TODO Edit profile
@@ -108,7 +108,7 @@ def profile(login):
 
 
 @app.route('/logout')
-def logout():
+def logout():  # Logout
     pass
 
 

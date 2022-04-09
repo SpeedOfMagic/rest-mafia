@@ -5,7 +5,7 @@ class Profile:
     login: str
     password: str
     name: str
-    image: bytes
+    image: str
     gender: str
     mail: str
     total_time: int
@@ -13,12 +13,12 @@ class Profile:
     win_count: int
     lose_count: int
 
-    def __init__(self, login, password, name='', image=b'', gender='', mail='',
+    def __init__(self, login, password, name='', image=None, gender='', mail='',
                  total_time=0, session_count=0, win_count=0, lose_count=0):
         self.login = login
         self.password = password
         self.name = name
-        self.image = image
+        self.image = open('templates/default_avatar.png', 'rb').read() if image is None else image
         self.gender = gender
         self.mail = mail
         self.total_time = total_time
@@ -38,7 +38,7 @@ class ProfileDao:
             "login" STRING PRIMARY KEY,
             "password" STRING NOT NULL,  -- Actually sha256 of a real password
             "name" STRING NOT NULL,
-            "image" STRING NOT NULL,
+            "image" BLOB NOT NULL,
             "gender" STRING NOT NULL,
             "mail" STRING NOT NULL,
             "total_time" INTEGER NOT NULL,
@@ -78,7 +78,7 @@ class ProfileDao:
         cursor.close()
         if row is None:
             return None
-        return Profile(login=row['login'], password=row['password'],
+        return Profile(login=row['login'], password=row['password'], image=row['image'],
                        name=row['name'], gender=row['gender'], mail=row['mail'], total_time=row['total_time'],
                        session_count=row['session_count'], win_count=row['win_count'], lose_count=row['lose_count'])
 
