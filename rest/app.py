@@ -101,9 +101,32 @@ def profile(login):
     return render_page('profile.html', **vars(cur_profile), base64image=base64image)
 
 
-# TODO Edit profile
+@app.route('/edit/<string:login>', methods=['GET'])
+def edit(login):
+    if login is None or login == '':
+        return render_page('response.html', reason='Invalid login'), 400
+    if get_login_if_authorized() != login:
+        return render_page('response.html', reason='You cannot edit profile of another account!'), 403
+    return render_page('edit.html', login=login)
+
+
+@app.route('/edit/<string:login>', methods=['POST'])
+def edit_post(login):
+    if login is None or login == '':
+        return render_page('response.html', reason='Invalid login'), 400
+    if get_login_if_authorized() != login:
+        return render_page('response.html', reason='You cannot edit profile of another account!'), 403
+
+    password = get_hash(request.form['password']) if request.form['password'] else None
+    name = request.form['name'] if request.form['name'] else None
+    image = request.files['image'].stream.read() if 'image' in request.files else None
+    gender = request.form['gender'] if request.form['gender'] else None
+    mail = request.form['mail'] if request.form['mail'] else None
+    dao.modify_profile(login, password=password, name=name, image=image, gender=gender, mail=mail)
+    return render_page('response.html', reason='Profile updated')
+
+
 # TODO Generate PDF
-# TODO Check permissions for edit
 # TODO Handle for submitting game result
 
 
