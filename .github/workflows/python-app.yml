@@ -28,6 +28,6 @@ jobs:
     - name: Generate python files by using grpc_tools.protoc
       run: python -m grpc_tools.protoc -I=proto --python_out=. --grpc_python_out=proto proto/mafia_service.proto
     - name: Check code style
-      run: pycodestyle ./mafia ./voice_chat --max-line-length=120
+      run: pycodestyle ./mafia ./voice_chat ./rest --max-line-length=120
     - name: Test with pytest
       run: pytest ./mafia/tests.py ./voice_chat/tests.py ./rest/tests.py

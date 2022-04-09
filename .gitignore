@@ -3,3 +3,4 @@
 __pycache__/
 mafia_service_pb2.py
 proto/mafia_service_pb2_grpc.py
+*.db

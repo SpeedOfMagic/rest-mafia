@@ -1,72 +1,42 @@
-<!DOCTYPE HTML>
-<html lang="en">
-<head>
-    <title>REST-mafia - Main Page</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-</head>
-<body class="container-fluid">
-    <header>
-        <div><a href="/" style="color: black; text-decoration: none">
-            <p style="float: left;"><img src="/ico.png" width="70"/></p>
-            <h1>REST-Mafia</h1>
-        </a></div>
-    </header>
-    <nav>
-        <div class="btn-group w-100" role="group" aria-label="Basic example">
-          <a href="/" type="button" class="btn btn-primary">Home page</a>
-          <a href="all_profiles" type="button" class="btn btn-secondary">View all profiles</a>
-          <a href="register" type="button" class="btn btn-warning">Register</a>
-          <a href="authorize" type="button" class="btn btn-danger">Authorize</a>
-        </div>
-    </nav>
-    <main>
-        <h1 class="text-center times-new-roman huge">Welcome to the main page of REST-mafia!</h1>
-        <hr/>
-        <h2>What is REST-mafia?</h2>
-        <p>This is a Python application for Really Exciting Social Task "Mafia", that allows people to connect and play "Mafia (Werewolf)" game.</p>
-        <p>Unlike SOA-mafia, it requires registration and supports user profiles.</p>
-        <hr/>
-        <h3>Clarifications for rules</h3>
-        <ul class="list-group">
-            <li class="list-group-item">The only roles are civilians (villagers), mafias (werewolves) and a commissar (seer).</li>
-            <li class="list-group-item">Game starts on the day phase. On the first day it's impossible to execute anyone.</li>
-            <li class="list-group-item">When voting, person is executed or murdered if and only if more than half of the players vote for him.</li>
-            <li class="list-group-item">At night, only mafia can hear other mafia.</li>
-            <li class="list-group-item">Dead people can't talk.</li>
-            <li class="list-group-item">Amount of players in each role depend on amount of players. Here is a table that shows possible configurations:
-            <table class="table">
-                <tr>
-                    <td><b>Player count</b> <i>n</i></td>
-                    <td><b>Commissar count</b></td>
-                    <td><b>Mafias count</b></td>
-                    <td><b>Civilians count</b></td>
-                </tr>
-                <tr>
-                    <td>4</td><td>1</td><td>1</td><td>2</td>
-                </tr>
-                <tr>
-                    <td>5</td><td>1</td><td>1</td><td>3</td>
-                </tr>
-                <tr>
-                    <td>6</td><td>1</td><td>2</td><td>3</td>
-                </tr>
-                <tr>
-                    <td><i>n > 6</i></td><td>1</td><td><i>n // 3</i></td><td><i>n - 1 - n // 3</i></td>
-                </tr>
-            </table>
-            </li>
-        </ul>
-        <hr/>
-        <h3>How can I play it?</h3>
-        <p>Just follow
-            <a href="https://github.com/SpeedOfMagic/rest-mafia">this link</a>
-            and follow the instructions!
-        </p>
-    </main>
-
-    <footer>
-        <hr/>
-        <p>REST-mafia (c) Copyright 2022 Daniil Vasilev</p>
-    </footer>
-</body>
-</html>
+<h1 class="text-center times-new-roman huge">Welcome to the main page of REST-mafia!</h1>
+<hr/>
+<h2>What is REST-mafia?</h2>
+<p>This is a Python application for Really Exciting Social Task "Mafia", that allows people to connect and play "Mafia (Werewolf)" game.</p>
+<p>Unlike SOA-mafia, it requires registration and supports user profiles.</p>
+<hr/>
+<h3>Clarifications for rules</h3>
+<ul class="list-group">
+    <li class="list-group-item">The only roles are civilians (villagers), mafias (werewolves) and a commissar (seer).</li>
+    <li class="list-group-item">Game starts on the day phase. On the first day it's impossible to execute anyone.</li>
+    <li class="list-group-item">When voting, person is executed or murdered if and only if more than half of the players vote for him.</li>
+    <li class="list-group-item">At night, only mafia can hear other mafia.</li>
+    <li class="list-group-item">Dead people can't talk.</li>
+    <li class="list-group-item">Amount of players in each role depend on amount of players. Here is a table that shows possible configurations:
+    <table class="table">
+        <tr>
+            <td><b>Player count</b> <i>n</i></td>
+            <td><b>Commissar count</b></td>
+            <td><b>Mafias count</b></td>
+            <td><b>Civilians count</b></td>
+        </tr>
+        <tr>
+            <td>4</td><td>1</td><td>1</td><td>2</td>
+        </tr>
+        <tr>
+            <td>5</td><td>1</td><td>1</td><td>3</td>
+        </tr>
+        <tr>
+            <td>6</td><td>1</td><td>2</td><td>3</td>
+        </tr>
+        <tr>
+            <td><i>n > 6</i></td><td>1</td><td><i>n // 3</i></td><td><i>n - 1 - n // 3</i></td>
+        </tr>
+    </table>
+    </li>
+</ul>
+<hr/>
+<h3>How can I play it?</h3>
+<p>Just follow
+    <a href="https://github.com/SpeedOfMagic/rest-mafia">this link</a>
+    and follow the instructions!
+</p>
