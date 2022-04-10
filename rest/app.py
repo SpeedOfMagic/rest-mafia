@@ -128,6 +128,7 @@ def edit_post(login):
 
 # TODO Generate PDF
 # TODO Handle for submitting game result
+# TODO JWT for game part
 
 
 @app.route('/logout')
