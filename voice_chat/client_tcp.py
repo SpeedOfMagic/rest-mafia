@@ -19,7 +19,7 @@ from mafia.common import WAIT_TIME_TO_START
 
 class Client:
     RETRY_LIMIT = 3
-    NAME_LEN_LIMIT = 100
+    NAME_LEN_LIMIT = 200
 
     sock: socket.socket
     console: ClientConsole
@@ -33,7 +33,7 @@ class Client:
 
         while 1:
             try:
-                self.name = input(f'Enter your name (no more than {self.NAME_LEN_LIMIT} characters) --> ')
+                self.name = input(f'Enter JWT token --> ')
                 if not 1 <= len(self.name) <= self.NAME_LEN_LIMIT:
                     print('Maximum name length exceeded or name is empty')
                     continue

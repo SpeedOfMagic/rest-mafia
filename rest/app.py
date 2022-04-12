@@ -33,7 +33,7 @@ def get_login_if_authorized():
 
 
 def render_page(page, authorized_login=None, use_param=False, **context):
-    template = open('templates/base.html').read().replace('{main}', open(f'templates/{page}').read())
+    template = open('rest/templates/base.html').read().replace('{main}', open(f'rest/templates/{page}').read())
     context['authorized_login'] = authorized_login if use_param else get_login_if_authorized()
     return render_template_string(template, **context)
 
@@ -88,7 +88,8 @@ def authorize_post():
         return render_page('response.html', reason='Password is incorrect'), 400
 
     jwt_token = jwt.encode({'login': login, 'password': request.form['password']}, secret, algorithm="HS256")
-    resp = make_response(render_page('response.html', login, True, reason='Authorization successful!'))
+    resp = make_response(render_page('response.html', login, True, reason='Authorization successful!',
+                                     text=f'Your JWT token to play game: {jwt_token}'))
     resp.set_cookie('jwt', jwt_token)
     return resp
 
@@ -127,8 +128,8 @@ def edit_post(login):
     return render_page('response.html', reason='Profile updated')
 
 
-# TODO Handle for submitting game result
-# TODO JWT for game part
+def submit_game_result(login, total_time, won):
+    dao.finish_game(login, total_time, won)
 
 
 @app.route('/logout')
@@ -153,13 +154,10 @@ def generate_pdf(login):
 
 @app.route('/ico.png')
 def ico():
-    return open('templates/ico.png', 'rb').read()
+    return open('rest/templates/ico.png', 'rb').read()
 
 
 @app.route('/favicon.ico')
 def fav():
-    return open('templates/favicon.ico', 'rb').read()
+    return open('rest/templates/favicon.ico', 'rb').read()
 
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80)

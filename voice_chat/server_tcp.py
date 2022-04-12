@@ -1,3 +1,4 @@
+import jwt
 import socket
 import sys
 import threading
@@ -6,6 +7,7 @@ from protocol import get_message, MessageType, ConnectedResponseMessage
 from client_manager import Profile, ClientManager
 from server_console import ServerConsole
 from room_server import RoomServer
+from rest.app import app, dao, secret, get_hash
 
 
 class Server:
@@ -15,8 +17,15 @@ class Server:
     sock: socket.socket
     client_manager: ClientManager
     room_server: dict[int, RoomServer]
+    web_server: threading.Thread
+
+    @staticmethod
+    def launch_web_server():
+        app.run(host='0.0.0.0', port=80)
 
     def __init__(self):
+        self.web_server = threading.Thread(target=self.launch_web_server)
+        self.web_server.start()
         self.server_ip = socket.gethostbyname(socket.gethostname())
         while 1:
             try:
@@ -47,17 +56,32 @@ class Server:
 
             msg = get_message(client_sock)
 
+            login_pass = None
+            login_success = False
             if msg.message_type != MessageType.CONNECTED or msg.name is None or msg.name == '':
                 client_sock.sendall(ConnectedResponseMessage(error='Invalid ConnectedMessage').encode())
                 client_sock.close()
                 continue
-            elif msg.name in [client.name for client in self.client_manager.clients.values()]:
-                client_sock.sendall(ConnectedResponseMessage(error='Such name already exists').encode())
+            else:
+                jwt_token = msg.name
+                try:
+                    login_pass = jwt.decode(jwt_token, secret, algorithms=["HS256"])
+                    print(login_pass)
+                    if 'login' in login_pass and 'password' in login_pass:
+                        login_profile = dao.lookup_profile(login_pass['login'])
+                        print(login_profile.password, get_hash(login_pass['password']))
+                        if login_profile is not None and login_profile.password == get_hash(login_pass['password']):
+                            login_success = True
+                except jwt.DecodeError:
+                    pass
+            if not login_success:
+                client_sock.sendall(ConnectedResponseMessage(error='Incorrect JWT token').encode())
                 client_sock.close()
                 continue
             else:
                 client_sock.sendall(ConnectedResponseMessage(error='').encode())
 
+            msg.name = login_pass['login']
             client_id = self.client_manager.add_client(Profile(msg.name, client_sock, addr))
             print(f'{msg.name} with client_id={client_id} has connected to the server!')
             threading.Thread(target=self.handle_client, args=(client_id,)).start()

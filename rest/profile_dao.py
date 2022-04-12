@@ -18,7 +18,7 @@ class Profile:
         self.login = login
         self.password = password
         self.name = name
-        self.image = open('templates/default_avatar.png', 'rb').read() if image is None else image
+        self.image = open('rest/templates/default_avatar.png', 'rb').read() if image is None else image
         self.gender = gender
         self.mail = mail
         self.total_time = total_time
