@@ -5,3 +5,4 @@ grpcio-tools
 flask
 PyJWT
 fpdf
+pika

@@ -4,6 +4,7 @@ import sqlite3
 
 from flask import Flask, request, render_template_string, make_response
 from rest.profile_dao import Profile, ProfileDao
+from rest.pdf_report import generate_pdf_by_profile
 from hashlib import sha256
 import jwt
 
@@ -126,7 +127,6 @@ def edit_post(login):
     return render_page('response.html', reason='Profile updated')
 
 
-# TODO Generate PDF
 # TODO Handle for submitting game result
 # TODO JWT for game part
 
@@ -138,6 +138,17 @@ def logout():
     resp = make_response(render_page('response.html', None, True, reason='You have successfully logged out'))
     resp.set_cookie('jwt', '')
     return resp
+
+
+@app.route('/report/<string:login>.pdf')
+def generate_pdf(login):
+    # TODO Use rabbitmq to do this shit
+    cur_profile = dao.lookup_profile(login)
+    pdf = generate_pdf_by_profile(cur_profile)
+    response = make_response(pdf)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = f'inline; filename={login}.pdf'
+    return response
 
 
 @app.route('/ico.png')
