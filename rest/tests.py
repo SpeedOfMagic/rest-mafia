@@ -8,6 +8,7 @@ def test_dao_init():
     ProfileDao()
     assert os.path.exists(ProfileDao.DB_PATH)
     assert len(open(ProfileDao.DB_PATH, 'rb').read()) > 0
+    os.remove(ProfileDao.DB_PATH)
 
 
 BASE_PROFILE = Profile(
@@ -36,6 +37,7 @@ def test_dao_get_all_logins():
     dao.insert_profile(profile)
 
     assert set(dao.get_all_logins()) == {BASE_PROFILE.login, profile.login}
+    os.remove(ProfileDao.DB_PATH)
 
 
 def test_dao_get_profile():
@@ -46,6 +48,7 @@ def test_dao_get_profile():
 
     dao_profile = dao.lookup_profile(BASE_PROFILE.login)
     assert vars(dao_profile) == vars(BASE_PROFILE)
+    os.remove(ProfileDao.DB_PATH)
 
 
 def test_dao_modify_profile():
@@ -60,6 +63,7 @@ def test_dao_modify_profile():
     assert new_profile.gender == 'Female'
     new_profile.mail, new_profile.gender = BASE_PROFILE.mail, BASE_PROFILE.gender
     assert vars(new_profile) == vars(BASE_PROFILE)
+    os.remove(ProfileDao.DB_PATH)
 
 
 def test_dao_finish_game():
@@ -81,3 +85,4 @@ def test_dao_finish_game():
     assert profile.session_count == BASE_PROFILE.session_count + 2
     assert profile.win_count == BASE_PROFILE.win_count + 1
     assert profile.lose_count == BASE_PROFILE.lose_count + 1
+    os.remove(ProfileDao.DB_PATH)

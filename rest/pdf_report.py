@@ -1,54 +1,55 @@
-import os
-import textwrap
+import pika
 import uuid
-from fpdf import FPDF
-
-from rest.profile_dao import Profile
+from time import sleep
 
 
-def text_to_pdf(text, image):
-    a4_width_mm = 210
-    pt_to_mm = 0.35
-    fontsize_pt = 26
-    fontsize_mm = fontsize_pt * pt_to_mm
-    margin_bottom_mm = 10
-    character_width_mm = 7 * pt_to_mm
-    width_text = int(a4_width_mm // character_width_mm)
+class QueueReader:
+    QUEUE_NAME = 'pdf_queue'
 
-    pdf = FPDF(orientation='P', unit='mm', format='A4')
-    pdf.set_auto_page_break(True, margin=margin_bottom_mm)
-    pdf.add_page()
+    corr_id: str
+    response: str or None
 
-    name = uuid.uuid4().__str__()
-    open(f'{name}.png', 'wb+').write(image)
-    pdf.image(f'{name}.png', w=100, h=100)
-    os.remove(f'{name}.png')
-    pdf.set_font(family='Courier', size=fontsize_pt)
-    splitted = text.split('\n')
+    def __init__(self):
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters('localhost', heartbeat=0))
+        self.channel = self.connection.channel()
+        result = self.channel.queue_declare(queue='', exclusive=True, durable=True)
+        self.callback_queue = result.method.queue
 
-    for line in splitted:
-        lines = textwrap.wrap(line, width_text)
+        self.channel.basic_consume(
+            queue=self.callback_queue,
+            on_message_callback=self.on_response,
+            auto_ack=True)
+        self.response = None
 
-        if len(lines) == 0:
-            pdf.ln()
+    def on_response(self, _, __, props, body):
+        if self.corr_id == props.correlation_id:
+            self.response = body
 
-        for wrap in lines:
-            pdf.cell(0, fontsize_mm, wrap, ln=1)
+    def generate_pdf(self, profile) -> str:
+        self.corr_id = str(uuid.uuid4())
+        self.response = None
+        self.channel.basic_publish(
+            exchange='',
+            routing_key=self.QUEUE_NAME,
+            properties=pika.BasicProperties(
+                reply_to=self.callback_queue,
+                delivery_mode=2,
+                correlation_id=self.corr_id,
+            ),
+            body=str(vars(profile)))
 
-    return pdf.output('', 'S').encode('latin-1')
+        while self.response is None:
+            self.connection.process_data_events()
+            sleep(0.1)
+        assert self.response is not None
+        return self.response
 
 
-def generate_pdf_by_profile(profile: Profile):
-    text = f'''
-=======================================
-Login: {profile.login}
-Name: {profile.name}
-Gender: {profile.gender}
-Mail: {profile.mail}
-=======================================
-Total time: {profile.total_time}
-Sessions played: {profile.session_count}
-Games won: {profile.win_count}
-Games lost: {profile.lose_count}
-'''
-    return text_to_pdf(text, profile.image)
+reader = None
+
+
+def generate_pdf_via_queue(profile):
+    global reader
+    if reader is None:
+        reader = QueueReader()
+    return reader.generate_pdf(profile)

@@ -2,6 +2,18 @@
 This is a Python application for Really Exciting Social Task "Mafia", that allows people to connect and play "Mafia (Werewolf)" game.
 Unlike SOA-mafia, it requires registration and supports user profiles.
 
+
+# How to launch server
+1. Launch rabbitmq: `docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.9-management`
+2. Read config from `server_config.py` and be sure, that everything is exactly as you want it.
+3. Launch worker: `python3 worker.py`
+4. Launch server: `python3 voice_chat/server.py`
+
+# How to play from client
+1. Authorize on website
+2. Copy your JWT token
+3. Enter it when client asks you to
+
 # Clarifications for rules
 - The only roles are civilians (villagers), mafias (werewolves) and a commissar (seer).
 - Game starts on the day phase. On the first day it's impossible to execute anyone.

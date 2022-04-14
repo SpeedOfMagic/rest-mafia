@@ -20,7 +20,7 @@
         <li class="list-group-item flex-fill col h-25">{{ win_count }}</li>
         <li class="list-group-item flex-fill col h-25">{{ lose_count }}</li>
     </ul>
-    <p><a href="/report/{{ login }}.pdf" type="button" class="btn btn-secondary">Generate PDF report</a></p>
+    <p><a href="/report/{{ login }}" type="button" class="btn btn-secondary">Generate PDF report</a></p>
     {% if login==authorized_login %}
         <p><a href="/edit/{{ login }}" type="button" class="btn btn-warning">Edit profile</a></p>
     {% endif %}

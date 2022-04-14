@@ -10,5 +10,4 @@ RUN apt-get install -y protobuf-compiler
 RUN pip install -r requirements.txt
 RUN python -m grpc_tools.protoc -I=proto --python_out=. --grpc_python_out=proto proto/mafia_service.proto
 
-CMD python3 voice_chat/server_tcp.py & python3 rest/server.py
-CMD ( cd rest && python3 app.py ) & ( python3  )
+CMD python3 voice_chat/server_tcp.py

@@ -1,10 +1,11 @@
 import base64
 import secrets
 import sqlite3
+import threading
 
 from flask import Flask, request, render_template_string, make_response
 from rest.profile_dao import Profile, ProfileDao
-from rest.pdf_report import generate_pdf_by_profile
+from rest.pdf_report import generate_pdf_via_queue
 from hashlib import sha256
 import jwt
 
@@ -141,12 +142,32 @@ def logout():
     return resp
 
 
+available_pdfs = {}
+login_thread = {}
+
+
+def create_report(cur_profile):
+    available_pdfs[cur_profile.login] = generate_pdf_via_queue(cur_profile)
+
+
+@app.route('/report/<string:login>')
+def generate_report(login):
+    cur_profile = dao.lookup_profile(login)
+    if cur_profile is None:
+        return render_page('response.html', reason='No such profile exists!')
+    if login in login_thread:
+        login_thread[login].join()
+    login_thread[login] = threading.Thread(target=create_report, args=(cur_profile,))
+    login_thread[login].start()
+    return render_page('response.html', reason=f'Generating report for {login}...',
+                       text='Append .pdf to the end of this link to get a report!')
+
+
 @app.route('/report/<string:login>.pdf')
 def generate_pdf(login):
-    # TODO Use rabbitmq to do this shit
-    cur_profile = dao.lookup_profile(login)
-    pdf = generate_pdf_by_profile(cur_profile)
-    response = make_response(pdf)
+    if login not in available_pdfs:
+        return render_page('response.html', reason='This report is not available')
+    response = make_response(available_pdfs[login])
     response.headers['Content-Type'] = 'application/pdf'
     response.headers['Content-Disposition'] = f'inline; filename={login}.pdf'
     return response
@@ -161,3 +182,5 @@ def ico():
 def fav():
     return open('rest/templates/favicon.ico', 'rb').read()
 
+
+app.run(host='0.0.0.0', port=80)
